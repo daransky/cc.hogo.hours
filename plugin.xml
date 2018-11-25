@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="splashExtension" name="Splash Extensions" schema="schema/splashExtension.exsd"/>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            thread="main"
+            visible="true">
+         <run
+               class="cc.hogo.hours.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="cc.hogo.hours.Perspective"
+            icon="icons/overview.gif"
+            id="cc.hogo.hours.perspective"
+            name="Stundenübersicht">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="cc.hogo.hours.views.disponent.DisponentView"
+            icon="icons/person.gif"
+            id="cc.hogo.hours.DisponentView"
+            name="Vertreter">
+      </view>
+      <view
+            allowMultiple="false"
+            class="cc.hogo.hours.views.hours.HoursViewAll"
+            icon="icons/home.png"
+            id="cc.hogo.hours.views.hours.HoursViewAll"
+            name="Gesamtübersicht">
+      </view>
+      <view
+            class="cc.hogo.hours.views.hours.disponent.HoursViewDisponent"
+            icon="icons/overview.gif"
+            id="cc.hogo.hours.views.hours.HoursViewDisponent"
+            name="Stundenübersicht">
+      </view>
+      <view
+            allowMultiple="false"
+            class="cc.hogo.hours.views.hoursimport.HoursImportView"
+            icon="icons/import.gif"
+            id="cc.hogo.hours.views.hoursimport.HoursImportView"
+            name="Import Übersicht"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            class="cc.hogo.hours.views.hours.year.HoursViewYear"
+            icon="icons/person.gif"
+            id="cc.hogo.hours.views.hours.year.HoursViewYear"
+            name="Stundenübersicht im Jahr">
+      </view>
+      <view
+            allowMultiple="false"
+            class="cc.hogo.hours.views.log.LogView"
+            icon="icons/log.png"
+            id="cc.hogo.hours.views.log.LogView"
+            name="Log">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="cc.hogo.hours.views.log.LogView"
+            name="Log">
+      </command>
+      <command
+            id="cc.hogo.hours.views.hoursimport.HoursImportView"
+            name="Import">
+      </command>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="cc.hogo.hours.application"
+            name="Hours">
+         <property
+               name="appName"
+               value="Hours">
+         </property>
+      </product>
+   </extension>on>
+
+</plugin>
