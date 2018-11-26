@@ -1,9 +1,14 @@
 package cc.hogo.hours.views.hoursimport;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -15,10 +20,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import cc.hogo.hours.db.Disponent;
 import cc.hogo.hours.db.HourEntry;
 
 public class HoursEditDialog extends TitleAreaDialog {
 
+	private Map<String, String> id2value = new HashMap<>();
+	private Map<String, String> value2id = new HashMap<>();
 	private final HourEntry entry;
 
 	public HoursEditDialog(Shell parentShell, HourEntry entry) {
@@ -41,13 +49,28 @@ public class HoursEditDialog extends TitleAreaDialog {
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		body.setLayout(new GridLayout(4, false));
 
-		addControlString(body, "Disponent", HourEntry::getDisponentId, null);
-		addControlInt(body, "Kundennummer", HourEntry::getKundenNummer, null);
-		addControlString(body, "Kundenname", HourEntry::getKundenName, null);
+		Text text = addControlString(body, "Disponent", null, null);
+		String[] proposals = id2value.values().toArray(new String[id2value.size()]);
+		AutoCompleteField field = new AutoCompleteField(text, new TextContentAdapter(), proposals);
+		field.setProposals(proposals);
+		if (entry != null) {
+			String value = id2value.get(entry.getDisponentId());
+			String id = entry.getDisponentId();
+			if (id == null)
+				id = "";
+			text.setText(value == null ? id : value);
+		}
+		text.addModifyListener(l -> {
+			String t = text.getText();
+			String id = value2id.get(t);
+			entry.setDisponentId(id == null ? t : id);
+		});
+		addControlInt(body, "Kundennummer", HourEntry::getKundenNummer, HourEntry::setKundenNummer);
+		addControlString(body, "Kundenname", HourEntry::getKundenName, HourEntry::setKundenName);
 		addControlFloat(body, "Fakturstunden", HourEntry::getFakturStunden, HourEntry::setFakturStunden);
 		addControlFloat(body, "Lohnstunden", HourEntry::getLohnStunden, HourEntry::setLohnStunden);
 		Text t = addControlString(body, "Info", HourEntry::getInfo, HourEntry::setInfo);
-		GridData id = GridDataFactory.copyData((GridData)t.getLayoutData());
+		GridData id = GridDataFactory.copyData((GridData) t.getLayoutData());
 		id.verticalSpan = 3;
 		t.setLayoutData(id);
 		return area;
@@ -80,7 +103,7 @@ public class HoursEditDialog extends TitleAreaDialog {
 	Listener numericValidator = (e) -> {
 		String str = e.text;
 		for (int i = 0, max = str.length(); i < max; i++) {
-			if( str.charAt(i) != '.' && !Character.isDigit(str.charAt(i)) ) {
+			if (str.charAt(i) != '.' && !Character.isDigit(str.charAt(i))) {
 				e.doit = false;
 				return;
 			}
@@ -122,9 +145,18 @@ public class HoursEditDialog extends TitleAreaDialog {
 	public HourEntry getEntry() {
 		return entry;
 	}
-	
+
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
+
+	public void setDisponents(Collection<Disponent> values) {
+		if (values != null)
+			values.forEach(e -> {
+				value2id.put(e.getName() == null ? e.getSid() : e.getName(), e.getSid());
+				id2value.put(e.getSid(), e.getName() == null ?  e.getSid() : e.getName() );
+			});
+	}
+
 }

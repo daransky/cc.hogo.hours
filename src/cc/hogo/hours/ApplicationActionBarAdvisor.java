@@ -1,7 +1,6 @@
 package cc.hogo.hours;
 
 import org.daro.common.ui.OpenViewAction;
-import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -27,15 +26,14 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 	private IWorkbenchAction exitAction;
 	private IWorkbenchAction aboutAction;
-	private IWorkbenchAction prefAction;
 	private ImportAction importAction;
-
-	private OpenViewAction hoursByYear, hoursByDisponent, importView, logView;
+	private OpenViewAction importView, logView;
 
 	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
 		super(configurer);
 	}
 
+	@Override
 	protected void makeActions(final IWorkbenchWindow window) {
 
 		exitAction = ActionFactory.QUIT.create(window);
@@ -44,18 +42,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		aboutAction = ActionFactory.ABOUT.create(window);
 		register(aboutAction);
 
-		prefAction = ActionFactory.PREFERENCES.create(window);
-		register(prefAction);
-
 		importAction = new ImportAction(window);
 		importAction.setImageDescriptor(Activator.getImageDescriptor("icons/import_wiz.png"));
 		register(importAction);
-		
-		hoursByYear = new OpenViewAction(window, "Jahresübersicht", HoursViewYear.ID);
+
+		OpenViewAction hoursByYear = new OpenViewAction(window, "Jahresübersicht", HoursViewYear.ID);
 		hoursByYear.setImageDescriptor(Activator.getImageDescriptor("icons/person.gif"));
 		register(hoursByYear);
 
-		hoursByDisponent = new OpenViewAction(window, "Übersicht pro person", HoursViewDisponent.ID);
+		OpenViewAction hoursByDisponent = new OpenViewAction(window, "Übersicht pro person", HoursViewDisponent.ID);
 		hoursByDisponent.setImageDescriptor(Activator.getImageDescriptor("icons/overview.gif"));
 		register(hoursByDisponent);
 
@@ -69,27 +64,20 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 	}
 
+	@Override
 	protected void fillMenuBar(IMenuManager menuBar) {
 		MenuManager fileMenu = new MenuManager("File", IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
-		MenuManager actionsMenu = new MenuManager("Actions", IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
-		MenuManager helpMenu = new MenuManager("Help", IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
 
 		menuBar.add(fileMenu);
-		menuBar.add(actionsMenu);
-		menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
-		menuBar.add(helpMenu);
-
-		fileMenu.add(prefAction);
-		fileMenu.add(new Separator());
 		fileMenu.add(importAction);
+		fileMenu.add(new Separator());
 		fileMenu.add(importView);
 		fileMenu.add(logView);
 
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 
-		helpMenu.add(aboutAction);
 	}
 
 }

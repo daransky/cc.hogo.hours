@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Hours" uid="cc.hogo.hours.product" id="cc.hogo.hours.product" application="cc.hogo.hours.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
+<product name="Hours" uid="hours" id="cc.hogo.hours.product" application="cc.hogo.hours.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
 
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog
-      </programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
 
+   <splash
+      location="cc.hogo.hours" />
+   <launcher name="hours">
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
 
    <vm>
-      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
-
 
    <plugins>
       <plugin id="cc.hogo.hours"/>
@@ -87,17 +92,12 @@
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
-      <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.osgi.util"/>
-      <plugin id="org.eclipse.persistence.asm"/>
-      <plugin id="org.eclipse.persistence.core"/>
-      <plugin id="org.eclipse.persistence.jpa"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.workbench"/>

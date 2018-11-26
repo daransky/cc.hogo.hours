@@ -70,7 +70,7 @@ public class ImportPage extends WizardPage implements IImportPage {
 
 		month = MonthCombo.create(composite);
 		month.setLayoutData(right);
-		month.select(0);
+		month.select(context.getMonth());
 		month.addModifyListener( m -> { if( checkFields() ) context.setMonth(month.getSelectionIndex()); } ); 
 		
 		label = new CLabel(composite, SWT.NULL);
@@ -83,7 +83,7 @@ public class ImportPage extends WizardPage implements IImportPage {
 
 		path = new Text(composite, SWT.BORDER);
 		path.setLayoutData(ld);
-		path.addModifyListener( m -> { if(checkFields()) context.setPath(path.getText()); } );
+		path.addModifyListener( m -> { checkFields(); context.setPath(path.getText()); } );
 		
 		Button choose = new Button(composite, SWT.NONE);
 		choose.setText("...");

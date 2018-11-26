@@ -33,13 +33,11 @@ public class ImportWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		LogEntry last = Logger.instance().getImportEntry(context.year, context.month);
-		if (last != null) {
-			if (!MessageDialog.openConfirm(getShell(), "Import vorhanden",
+		if (last != null && !MessageDialog.openConfirm(getShell(), "Import vorhanden",
 					String.format("Import mit aktuellen Datum (%d/%d) bereits vorhanden. Möchten Sie vortfahren?",
 							context.month, context.year))) {
 				return false;
 			}
-		}
 
 		try {
 			context.importRecords();
@@ -51,6 +49,7 @@ public class ImportWizard extends Wizard {
 		return true;
 	}
 
+	@Override
 	public void addPages() {
 		addPage(new ImportPage(context));
 		addPage(new ImportPage2(context));

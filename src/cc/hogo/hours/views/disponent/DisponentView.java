@@ -8,6 +8,7 @@ import org.daro.common.ui.AbstractView;
 import org.daro.common.ui.TreeContentProvider;
 import org.daro.common.ui.TreeNodeData;
 import org.daro.common.ui.UIError;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -27,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import cc.hogo.hours.Activator;
+import cc.hogo.hours.core.CustomAction;
 import cc.hogo.hours.db.Disponent;
 import cc.hogo.hours.views.hours.HoursViewAll;
 import cc.hogo.hours.views.hours.disponent.HoursViewDisponent;
@@ -49,6 +51,12 @@ public class DisponentView extends AbstractView {
 		container.setLayout(new FillLayout());
 		toolkit.paintBordersFor(container);
 
+		CustomAction refresh = new CustomAction("Laden", Activator.getImageDescriptor("icons/refresh.gif"), 
+				() -> refresh());
+
+		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager(); 
+		toolBar.add(refresh);
+		
 		initializeTree(container);
 	}
 
@@ -177,5 +185,6 @@ public class DisponentView extends AbstractView {
 	public String getViewID() {
 		return ID;
 	}
+
 
 }

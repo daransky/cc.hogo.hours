@@ -2,6 +2,8 @@ package cc.hogo.hours.views.hoursimport;
 
 import java.sql.SQLException;
 import java.time.Year;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -35,7 +37,9 @@ import cc.hogo.hours.Activator;
 import cc.hogo.hours.core.AbstractTableLabelProvider;
 import cc.hogo.hours.core.MonthCombo;
 import cc.hogo.hours.db.DB;
+import cc.hogo.hours.db.Disponent;
 import cc.hogo.hours.db.HourEntry;
+import cc.hogo.hours.views.disponent.DisponentModel;
 
 public class HoursImportView extends AbstractView {
 
@@ -44,6 +48,7 @@ public class HoursImportView extends AbstractView {
 	private TableViewer viewer;
 	private Image refreshImg = Activator.getImageDescriptor("icons/refresh.gif").createImage();
 	private Image addImg = Activator.getImageDescriptor("icons/add.gif").createImage();
+	private Collection<Disponent> disponents;
 
 	Combo month;
 	Spinner year;
@@ -75,7 +80,7 @@ public class HoursImportView extends AbstractView {
 
 		parent.setLayout(new GridLayout(1, false));
 
-		GridLayout topLayout = new GridLayout(3, false);
+		GridLayout topLayout = new GridLayout(4, false);
 
 		Group top = new Group(parent, SWT.NONE);
 		top.setLayout(topLayout);
@@ -127,6 +132,7 @@ public class HoursImportView extends AbstractView {
 			public void widgetSelected(SelectionEvent e) {
 				HourEntry entry = new HourEntry();
 				HoursEditDialog dialog = new HoursEditDialog(Display.getCurrent().getActiveShell(), entry);
+				dialog.setDisponents(getDisponents());
 				if (dialog.open() == Window.OK) {
 					entry = dialog.getEntry();
 					model.add(entry);
@@ -162,13 +168,13 @@ public class HoursImportView extends AbstractView {
 				try {
 					entry = model.read(entry.getId());
 					HoursEditDialog dialog = new HoursEditDialog(table.getShell(), entry);
+					dialog.setDisponents(getDisponents());
 					if (dialog.open() == Window.OK) {
 						entry = dialog.getEntry();
 						model.update(entry);
 						item.setData(entry);
 						viewer.refresh(entry);
 					}
-					;
 				} catch (SQLException e1) {
 					try {
 						UIError.showError("DB Fehler", e1);
@@ -210,7 +216,6 @@ public class HoursImportView extends AbstractView {
 
 	@Override
 	public void setFocus() { //
-
 	}
 
 	private void addColumn(String text, int width) {
@@ -242,5 +247,17 @@ public class HoursImportView extends AbstractView {
 		refreshImg.dispose();
 		addImg.dispose();
 		super.dispose();
+	}
+	
+	Collection<Disponent> getDisponents() { 
+		if (disponents == null) {
+			disponents = new LinkedList<>();
+			try(DisponentModel m = new DisponentModel()) { 
+				m.select(year.getSelection()).forEachRemaining(d -> disponents.add(d));
+			} catch (Exception ee) {
+				UIError.showError("DB Fehler", ee);
+			}
+		}
+		return disponents;
 	}
 }
