@@ -23,6 +23,10 @@ public class Disponent {
 	public Disponent() {
 	}
 	
+	public Disponent(String login) {
+		this(login, null, null);
+	}
+	
 	public Disponent(String login, String name) {
 		this(login, name, null);
 	}
@@ -43,7 +47,7 @@ public class Disponent {
 	}
 
 	public String getName() {
-		return name;
+		return ( name != null && !name.isEmpty()) ? name : sid;
 	}
 
 	public void setName(String name) {

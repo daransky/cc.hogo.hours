@@ -39,7 +39,7 @@ public class DisponentView extends AbstractView {
 	private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 	private TreeNodeData root = new TreeNodeData("", TreeNodeData.NULL_NODE);
 	private TreeNodeData home = new TreeNodeData("Hogo", new TreeNodeData("Hogo", Disponent.All), Disponent.All);
-
+	private TreeViewer viewer;
 	/**
 	 * Create contents of the view part.
 	 * 
@@ -66,13 +66,13 @@ public class DisponentView extends AbstractView {
 	}
 
 	private void initializeTree(Composite parent) {
-		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setLabelProvider(new ILabelProvider() {
 			final Image imgDisponent = Activator.getImageDescriptor("icons/person.gif").createImage(),
 					imgYear = Activator.getImageDescriptor("icons/report_obj.gif").createImage(),
 					imgHome = Activator.getImageDescriptor("icons/home.png").createImage();
 
-			public void removeListener(ILabelProviderListener listener) {
+			public void removeListener(ILabelProviderListener listener) {//
 			}
 
 			public boolean isLabelProperty(Object element, String property) {
@@ -109,35 +109,10 @@ public class DisponentView extends AbstractView {
 		});
 		viewer.setContentProvider(new TreeContentProvider());
 
-		TreeNodeData current = null;
+		refresh();
 		
-		try(DisponentModel db = new DisponentModel()) {
-			final int now = Year.now().getValue();
-			
-			Collection<Integer> years = db.getYears();
-			for (Integer year : years) {
-				TreeNodeData item = new TreeNodeData(year.toString(), Disponent.Year);
-				if( year == now)
-					current = item;
-				
-				Iterator<Disponent> it = db.select(year);
-				while (it.hasNext()) {
-					Disponent disponent = it.next();
-					TreeNodeData node = new TreeNodeData(disponent.toString(), Disponent.Disponent);
-					node.setData(disponent);
-					item.addChild(node);
-				}
-				home.addChild(item);
-			}
-		} catch (Exception e) {
-			UIError.showError("DB Fehler", e);
-		}
-
 		root.addChild(home);
 		viewer.setInput(root);
-		
-		if( current != null )
-			viewer.expandToLevel(current, AbstractTreeViewer.ALL_LEVELS);
 		
 		viewer.getTree().addSelectionListener(new SelectionListener() {
 
@@ -173,12 +148,40 @@ public class DisponentView extends AbstractView {
 	}
 
 	@Override
-	public void setFocus() {
+	public void setFocus() { //
 	}
 
 	@Override
 	public void refresh() {
-
+		TreeNodeData current = null;
+		
+		home.removeChilds();
+		
+		try(DisponentModel db = new DisponentModel()) {
+			final int now = Year.now().getValue();
+			
+			Collection<Integer> years = db.getYears();
+			for (Integer year : years) {
+				TreeNodeData item = new TreeNodeData(year.toString(), Disponent.Year);
+				if( year == now)
+					current = item;
+				
+				Iterator<Disponent> it = db.select(year);
+				while (it.hasNext()) {
+					Disponent disponent = it.next();
+					TreeNodeData node = new TreeNodeData(disponent.toString(), Disponent.Disponent);
+					node.setData(disponent);
+					item.addChild(node);
+				}
+				home.addChild(item);
+			}
+		} catch (Exception e) {
+			UIError.showError("DB Fehler", e);
+		}
+		
+		viewer.expandToLevel(current!=null ? current : home, AbstractTreeViewer.ALL_LEVELS);
+			
+		viewer.refresh();
 	}
 
 	@Override

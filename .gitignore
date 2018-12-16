@@ -1,7 +1,1 @@
-.project
-.classpath
-.settings/
-bin/
-*.xlsx
-*.csv
-*.txt
+/bin/

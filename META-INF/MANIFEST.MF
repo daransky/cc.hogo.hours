@@ -17,4 +17,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: cc.hogo.hours
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- libs/postgresql-42.2.5.jar
+ libs/postgresql-42.2.5.jar,
+ lib/postgresql-42.2.5.jar

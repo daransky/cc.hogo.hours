@@ -44,7 +44,7 @@ public class LogView extends AbstractView {
 	}
 
 	@Override
-	public void setFocus() {
+	public void setFocus() {//
 	}
 	
 	@Override

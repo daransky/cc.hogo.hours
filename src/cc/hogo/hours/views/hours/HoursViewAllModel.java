@@ -43,15 +43,16 @@ public class HoursViewAllModel implements AutoCloseable {
 		officeHours.setInt(1, year);
 
 		SumBuilder sb = new SumBuilder(e);
-		ResultSet rs = officeHours.executeQuery();
-		while (rs.next()) {
-			int month = rs.getInt("month");
-			int officeId = rs.getInt("geschaeftstelle");
-			String name = rs.getString("kurzbezeichnung");
-			float sum = rs.getFloat("total");
-			sb.addOfficeSum(officeId, name, month, sum);
+		try (ResultSet rs = officeHours.executeQuery()) {
+			while (rs.next()) {
+				int month = rs.getInt("month");
+				int officeId = rs.getInt("geschaeftstelle");
+				String name = rs.getString("kurzbezeichnung");
+				float sum = rs.getFloat("total");
+				sb.addOfficeSum(officeId, name, month, sum);
+			}
+			return sb.build();
 		}
-		return sb.build();
 	}
 
 	public Collection<HoursAllTableEntry> load() throws SQLException {
@@ -63,14 +64,14 @@ public class HoursViewAllModel implements AutoCloseable {
 				int year = rs.getInt(1);
 				HoursAllTableEntry e = new HoursAllTableEntry(year);
 
-				float AllValue = 0f;
+				float allValue = 0f;
 
 				for (int i = 1, max = Months.NAMES.length + 1; i < max; i++) {
 					float tmp = rs.getFloat(i + 1);
-					AllValue += tmp;
+					allValue += tmp;
 					e.setHours(i, tmp);
 				}
-				e.setHours(0, AllValue);
+				e.setHours(0, allValue);
 
 				result.add(addOffices(e, year));
 			}

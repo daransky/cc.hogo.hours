@@ -32,7 +32,7 @@ public class Hour2Statement implements BiConsumer<HourEntry, PreparedStatement> 
 			s.setString(14, e.getKundenName());
 			s.setString(15, e.getInfo());
 			if( update )
-			s.setLong(16, e.getId());
+				s.setLong(16, e.getId());
 		} catch (SQLException e1) {
 			UIError.showError("DB Fehler", e1);
 		}

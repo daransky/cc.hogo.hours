@@ -90,7 +90,7 @@ public class HoursViewDisponent extends HoursAbstractView {
 				float[] sumRecord = model.getSum(disponent.getSid(), year);
 				float[] sumPrev = model.getSum(disponent.getSid(), year-1);
 				refreshData(lastResult, sumRecord);
-				refreshChart(sumRecord, sumPrev);
+				refreshChart(year, sumRecord, sumPrev);
 				
 				setContentDescription(ori + " " + disponent.getName());
 			} catch (SQLException e) {
@@ -108,13 +108,13 @@ public class HoursViewDisponent extends HoursAbstractView {
 		sum.setRecord(sumRecord);
 	}
 
-	void refreshChart(float[] sum1, float[] sum2) {
+	void refreshChart(int year, float[] sum1, float[] sum2) {
 		if( chart == null )
 			return;
 		
 		chart.removeSeries();
 		
-		int yearNow = Year.now().getValue();
+		int yearNow = year;
 		int yearPrv = yearNow -1;
 		
 		Function<float[], double[]> rec2chart = (values) -> {

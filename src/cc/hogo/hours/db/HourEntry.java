@@ -142,7 +142,7 @@ public class HourEntry {
 	}
 
 	public String getKundenName() {
-		return kundenName;
+		return ( kundenName == null || kundenName.isEmpty()) ? Integer.toString(kundenNummer):kundenName;
 	}
 
 	public void setKundenName(String kundenName) {
@@ -157,10 +157,21 @@ public class HourEntry {
 		this.info = info;
 	}
 
-	public HourEntry(String[] e) throws RuntimeException {
+	public HourEntry(String[] e) throws Exception {
 		geschaeftStelle = toInt(getUnquoted(e[0]));
 		kundenNummer = toInt(getUnquoted(e[1]));
-		kundenName = getUnquoted(e[2]);
+		String tmp = getUnquoted(e[2]);
+		if( tmp.startsWith("Monat ") && tmp.contains("- Jahr")) {
+			String[] values = tmp.split("-");
+			values[0] = values[0].trim();
+			values[1] = values[1].trim();
+			month = toInt(values[0].substring(values[0].length()-2));
+			if( month > 0)
+				month--;
+			year = toInt(values[1].substring(values[1].length() -4));
+		} else {
+			kundenName = getUnquoted(e[2]);
+		}
 		geschaeftStelle1 = toInt(getUnquoted(e[3]));
 		kurzBezeichnung = getUnquoted(e[4]);
 		personalNummer = toInt(getUnquoted(e[5]));
@@ -169,7 +180,7 @@ public class HourEntry {
 		vorname = getUnquoted(e[8]);
 		disponentId = getUnquoted(e[9]);
 		fakturStunden = toFloat(getUnquoted(e[10]));
-		lohnStunden = toFloat(getUnquoted(e[11]));
+		lohnStunden = (e.length <= 11) ? fakturStunden : toFloat(getUnquoted(e[11]));
 	}
 
 	public String getKurzBezeichnung() {
@@ -192,8 +203,13 @@ public class HourEntry {
 	}
 
 	static float toFloat(String arg) {
-		if (arg != null)
+		if (arg != null) {
+			if (arg.indexOf('.') != -1)
+				arg = arg.replace(".", "");
+
 			arg = arg.replace(',', '.');
+
+		}
 		return Float.parseFloat(arg);
 	}
 
@@ -222,6 +238,6 @@ public class HourEntry {
 			if (kundenName != null)
 				id = id * 31 + kundenName.hashCode();
 		}
-		return (int)id;
+		return (int) id;
 	}
 }

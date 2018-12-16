@@ -49,30 +49,40 @@ public class ImportPage extends WizardPage implements IImportPage {
 		right.horizontalSpan = 2;
 		right.horizontalAlignment = SWT.LEFT;
 
-		CLabel label = new CLabel(composite, SWT.NULL);
-		label.setText("Jahr:");
-		label.setLayoutData(left);
+		CLabel label = null;
+		if (!context.isLoadHistory()) {
 
-		year = new Spinner(composite, SWT.BORDER);
-		int now = Year.now().getValue();
-		year.setMinimum(now - 50);
-		year.setMaximum(now + 50);
-		year.setIncrement(1);
-		year.setLayoutData(right);
-		year.setSelection(now);
-		year.addModifyListener( m -> { if( checkFields() ) context.setYear(year.getSelection()); } );
+			label = new CLabel(composite, SWT.NULL);
+			label.setText("Jahr:");
+			label.setLayoutData(left);
 
-		context.setYear(now);
-		
-		label = new CLabel(composite, SWT.NULL);
-		label.setText("Monat:");
-		label.setLayoutData(left);
+			year = new Spinner(composite, SWT.BORDER);
+			int now = Year.now().getValue();
+			year.setMinimum(now - 50);
+			year.setMaximum(now + 50);
+			year.setIncrement(1);
+			year.setLayoutData(right);
+			year.setSelection(now);
+			year.addModifyListener(m -> {
+				if (checkFields())
+					context.setYear(year.getSelection());
+			});
 
-		month = MonthCombo.create(composite);
-		month.setLayoutData(right);
-		month.select(context.getMonth());
-		month.addModifyListener( m -> { if( checkFields() ) context.setMonth(month.getSelectionIndex()); } ); 
-		
+			context.setYear(now);
+
+			label = new CLabel(composite, SWT.NULL);
+			label.setText("Monat:");
+			label.setLayoutData(left);
+
+			month = MonthCombo.create(composite);
+			month.setLayoutData(right);
+			month.select(context.getMonth());
+			month.addModifyListener(m -> {
+				if (checkFields())
+					context.setMonth(month.getSelectionIndex());
+			});
+		}
+
 		label = new CLabel(composite, SWT.NULL);
 		label.setText("Datei:");
 		label.setLayoutData(left);
@@ -83,8 +93,11 @@ public class ImportPage extends WizardPage implements IImportPage {
 
 		path = new Text(composite, SWT.BORDER);
 		path.setLayoutData(ld);
-		path.addModifyListener( m -> { checkFields(); context.setPath(path.getText()); } );
-		
+		path.addModifyListener(m -> {
+			checkFields();
+			context.setPath(path.getText());
+		});
+
 		Button choose = new Button(composite, SWT.NONE);
 		choose.setText("...");
 		choose.addSelectionListener(new SelectionListener() {
@@ -104,24 +117,27 @@ public class ImportPage extends WizardPage implements IImportPage {
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(SelectionEvent e) { //
 			}
 		});
 		setControl(composite);
 		eval++;
 	}
-	
-	private boolean checkFields() { 
 
-		if (year.getSelection() <= 0) {
-			setErrorMessage("Jahr ist ungültig.");
-			return false;
+	private boolean checkFields() {
+
+		if (!context.isLoadHistory()) {
+
+			if (year.getSelection() <= 0) {
+				setErrorMessage("Jahr ist ungültig.");
+				return false;
+			}
+			if (month.getSelectionIndex() == -1) {
+				setErrorMessage("Monat ist ungültig.");
+				return false;
+			}
 		}
-		if (month.getSelectionIndex() == -1 ) {
-			setErrorMessage("Monat ist ungültig.");
-			return false;
-		}
-		
+
 		if (path.getText().isEmpty()) {
 			setErrorMessage("Datei für import darf nicht leer sein.");
 			return false;
@@ -131,20 +147,21 @@ public class ImportPage extends WizardPage implements IImportPage {
 		return true;
 	}
 
+	@Override
 	public boolean canFlipToNextPage() {
 		setErrorMessage(null);
-		if( eval++ > 1 ) {
+		if (eval++ > 1) {
 			try {
 				context.load();
 			} catch (IOException e) {
 				setErrorMessage(e.getMessage());
 			}
 			return true;
-		} 
+		}
 		return false;
 	}
 
 	@Override
-	public void reload() {
+	public void reload() { //
 	}
 }

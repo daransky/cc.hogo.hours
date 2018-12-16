@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.daro.common.ui.UIError;
 
@@ -27,8 +29,10 @@ public class DisponentModel extends GenericDbModel<Disponent> {
 
 			all = c.prepareStatement(
 					"select disponentid, (select name from disponent where sid = hours.disponentid) as Name from hours where \"year\" = ? group by disponentid, \"year\" order by disponentid");
-
-			this.row2e = (result) -> {
+			
+			insert = c.prepareStatement("insert into disponent (sid, firma, name) values(?,?,?)");
+			
+			this.row2e = result -> {
 				try {
 					return new Disponent(result.getString("disponentId"), result.getString("name"));
 				} catch (SQLException e1) {
@@ -37,20 +41,12 @@ public class DisponentModel extends GenericDbModel<Disponent> {
 				return null;
 			};
 
-//			this.e2row = (e, statement) -> {
-//				try {
-//					statement.setString(1, e.getSid());
-//					statement.setString(2, e.getName());
-//				} catch (Exception ee) {
-//					UIError.showError("DB Fehler", ee);
-//				}
-//			};
-
 		} catch (SQLException e) {
 			if (all != null)
 				all.close();
 			if (selectYears != null)
 				selectYears.close();
+			UIError.showError("DB Fehler", e);
 		}
 	}
 
@@ -68,5 +64,26 @@ public class DisponentModel extends GenericDbModel<Disponent> {
 		all.setInt(1, year);
 		final ResultSet rs = all.executeQuery();
 		return new GenericDBIterator<>(rs, this.row2e);
+	}
+	
+	@Override
+	public List<Disponent> select() throws SQLException {
+		List<Disponent> list = new LinkedList<>();
+		try(Statement any = all.getConnection().createStatement()) { 
+			try(ResultSet rs = any.executeQuery("select sid, firma, name from disponent")) {
+				while(rs.next()) { 
+					list.add(new Disponent(rs.getString("sid"), rs.getString("firma"), rs.getString("name")));
+				}
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public void add(Disponent e) throws SQLException {
+		insert.setString(1, e.getSid());
+		insert.setString(2, e.getFirma());
+		insert.setString(3, e.getName());
+		insert.executeUpdate();
 	}
 }

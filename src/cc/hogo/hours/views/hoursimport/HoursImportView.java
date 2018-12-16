@@ -48,6 +48,7 @@ public class HoursImportView extends AbstractView {
 	private TableViewer viewer;
 	private Image refreshImg = Activator.getImageDescriptor("icons/refresh.gif").createImage();
 	private Image addImg = Activator.getImageDescriptor("icons/add.gif").createImage();
+	private Image delImg = Activator.getImageDescriptor("icons/delete.png").createImage();
 	private Collection<Disponent> disponents;
 
 	Combo month;
@@ -80,7 +81,7 @@ public class HoursImportView extends AbstractView {
 
 		parent.setLayout(new GridLayout(1, false));
 
-		GridLayout topLayout = new GridLayout(4, false);
+		GridLayout topLayout = new GridLayout(5, false);
 
 		Group top = new Group(parent, SWT.NONE);
 		top.setLayout(topLayout);
@@ -142,10 +143,25 @@ public class HoursImportView extends AbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
+//
 			}
 		});
 
+		Button del = new Button(top, SWT.NONE);
+		del.setImage(delImg);
+		del.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HoursImportDialog dialog = new HoursImportDialog(HoursImportView.this);
+				dialog.open();
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+//
+			}
+		});
+		
 		Table table = new Table(parent, SWT.FULL_SELECTION);
 
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));

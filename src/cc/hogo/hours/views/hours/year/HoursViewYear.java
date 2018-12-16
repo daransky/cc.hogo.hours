@@ -78,7 +78,7 @@ public class HoursViewYear extends HoursAbstractView {
 	}
 
 	@Override
-	public void setFocus() {
+	public void setFocus() { //
 	}
 
 	void refreshTable(Collection<HoursYearTableEntry> data, SumHoursOverviewRecord[] data2) {
@@ -93,8 +93,7 @@ public class HoursViewYear extends HoursAbstractView {
 	public void refresh() {
 
 		if (node != null) {
-
-			if (node.getType() == Disponent.Year) {
+			if(node.getType() == Disponent.Year) {
 				int year = Integer.parseInt(node.getName());
 				try {
 					final Collection<HoursYearTableEntry> result = model.load(year);

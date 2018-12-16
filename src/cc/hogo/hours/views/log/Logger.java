@@ -23,6 +23,7 @@ public class Logger {
 	public static final int IMPORT_COMPLETED = 100;
 	public static final int RECORD_UPDATED = 110;
 	public static final int RECORD_ADDED = 120;
+	public static final int IMPORT_DELETED = 130;
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MM/yyyy");
 
@@ -41,10 +42,20 @@ public class Logger {
 				String.format("Benutzer '%S' hat den Satz '%d' hinzugefügt.", System.getProperty("user.name"), record));
 	}
 
+	public static LogEntry newImportDeleted(String record) {
+		return new LogEntry(IMPORT_DELETED, Type.WARNING,
+				String.format("Benutzer '%S' hat den Import '%s' gelöscht.", System.getProperty("user.name"), record));
+	}
+
 	public static LogEntry newImportCompleted(int count, int year, int month, long first, long last) {
 		final LocalDate date = LocalDate.of(year, month+1, 1);
-		return new LogEntry(RECORD_UPDATED, Type.INFO,
+		return new LogEntry(IMPORT_COMPLETED, Type.INFO,
 				String.format("Es wurden '%d' Sätze für '%s' importiert '%d-%d'.", count, FORMATTER.format(date), first, last));
+	}
+
+	public static LogEntry newHistoryImportCompleted(int count, long first, long last) {
+		return new LogEntry(IMPORT_COMPLETED, Type.INFO,
+				String.format("Benutzer '%s' hat %d Historiesätze importiert '%d-%d'.", System.getProperty("user.name"), count, first, last));
 	}
 
 	public static LogEntry newGeneralError(String errMessage) {

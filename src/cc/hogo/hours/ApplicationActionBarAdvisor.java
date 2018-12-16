@@ -11,11 +11,13 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
+import cc.hogo.hours.views.disponent.DisponentView;
 import cc.hogo.hours.views.hours.disponent.HoursViewDisponent;
 import cc.hogo.hours.views.hours.year.HoursViewYear;
 import cc.hogo.hours.views.hoursimport.HoursImportView;
 import cc.hogo.hours.views.log.LogView;
 import cc.hogo.hours.wizard.imp.ImportAction;
+import cc.hogo.hours.wizard.imp.ImportAllAction;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -27,7 +29,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	private IWorkbenchAction exitAction;
 	private IWorkbenchAction aboutAction;
 	private ImportAction importAction;
-	private OpenViewAction importView, logView;
+	private ImportAllAction importAllAction;
+	private OpenViewAction disponentView, importView, logView;
 
 	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
 		super(configurer);
@@ -45,6 +48,14 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		importAction = new ImportAction(window);
 		importAction.setImageDescriptor(Activator.getImageDescriptor("icons/import_wiz.png"));
 		register(importAction);
+		
+		importAllAction = new ImportAllAction(window);
+		importAllAction.setImageDescriptor(Activator.getImageDescriptor("icons/import_wiz.png"));
+		register(importAllAction);
+
+		disponentView = new OpenViewAction(window, "Hauptübersicht", DisponentView.ID);
+		disponentView.setImageDescriptor(Activator.getImageDescriptor("icons/person.gif"));
+		register(disponentView);
 
 		OpenViewAction hoursByYear = new OpenViewAction(window, "Jahresübersicht", HoursViewYear.ID);
 		hoursByYear.setImageDescriptor(Activator.getImageDescriptor("icons/person.gif"));
@@ -71,7 +82,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		menuBar.add(fileMenu);
 
 		fileMenu.add(importAction);
+		fileMenu.add(importAllAction);
 		fileMenu.add(new Separator());
+		fileMenu.add(disponentView);
 		fileMenu.add(importView);
 		fileMenu.add(logView);
 
