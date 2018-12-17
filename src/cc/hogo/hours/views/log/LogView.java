@@ -3,9 +3,13 @@ package cc.hogo.hours.views.log;
 import org.daro.common.ui.AbstractView;
 import org.daro.common.ui.TableContentProvider;
 import org.daro.common.ui.UIError;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+
+import cc.hogo.hours.Activator;
+import cc.hogo.hours.core.CustomAction;
 
 public class LogView extends AbstractView {
 
@@ -35,6 +39,13 @@ public class LogView extends AbstractView {
 		table = new Table(parent,SWT.BORDER | SWT.FULL_SELECTION);
 		viewer = new LogTable(table);
 		viewer.setContentProvider(new TableContentProvider<>(viewer));
+		
+		CustomAction refresh = new CustomAction("Laden", Activator.getImageDescriptor("icons/refresh.gif"), 
+				() -> refresh());
+		
+		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager(); 
+		toolBar.add(refresh);
+
 		try {
 			model = LogModel.open();
 			refresh();

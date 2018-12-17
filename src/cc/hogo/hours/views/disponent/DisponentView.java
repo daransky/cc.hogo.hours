@@ -163,9 +163,6 @@ public class DisponentView extends AbstractView {
 			Collection<Integer> years = db.getYears();
 			for (Integer year : years) {
 				TreeNodeData item = new TreeNodeData(year.toString(), Disponent.Year);
-				if( year == now)
-					current = item;
-				
 				Iterator<Disponent> it = db.select(year);
 				while (it.hasNext()) {
 					Disponent disponent = it.next();
@@ -174,14 +171,19 @@ public class DisponentView extends AbstractView {
 					item.addChild(node);
 				}
 				home.addChild(item);
+
+				if( year == now) {
+					current = item;
+				}
+				
 			}
 		} catch (Exception e) {
 			UIError.showError("DB Fehler", e);
 		}
-		
+
 		viewer.expandToLevel(current!=null ? current : home, AbstractTreeViewer.ALL_LEVELS);
 			
-		viewer.refresh();
+//		viewer.refresh();
 	}
 
 	@Override

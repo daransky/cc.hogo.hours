@@ -42,7 +42,7 @@ public class HoursYearTableEntry {
 	}
 
 	public String getName() {
-		return name;
+		return (name != null && !name.isEmpty()) ? name : sid;
 	}
 
 	public void setName(String name) {

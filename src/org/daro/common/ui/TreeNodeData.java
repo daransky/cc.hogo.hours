@@ -11,17 +11,17 @@ public class TreeNodeData {
 	protected Object data;
 
 	public TreeNodeData() {
-		children = new LinkedList<TreeNodeData>();
+		children = new LinkedList<>();
 	}
 
 	public TreeNodeData(String name, int type) {
-		children = new LinkedList<TreeNodeData>();
+		children = new LinkedList<>();
 		this.name = name;
 		this.type = type;
 	}
 
 	public TreeNodeData(String name, TreeNodeData parent, int type) {
-		children = new LinkedList<TreeNodeData>();
+		children = new LinkedList<>();
 		this.name = name;
 		this.parent = parent;
 		this.type = type;
