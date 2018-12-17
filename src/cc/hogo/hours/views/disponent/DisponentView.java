@@ -9,7 +9,6 @@ import org.daro.common.ui.TreeContentProvider;
 import org.daro.common.ui.TreeNodeData;
 import org.daro.common.ui.UIError;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -155,6 +154,7 @@ public class DisponentView extends AbstractView {
 	public void refresh() {
 		TreeNodeData current = null;
 		
+		viewer.collapseAll();
 		home.removeChilds();
 		
 		try(DisponentModel db = new DisponentModel()) {
@@ -181,10 +181,10 @@ public class DisponentView extends AbstractView {
 			UIError.showError("DB Fehler", e);
 		}
 
-		viewer.expandToLevel(current!=null ? current : home, AbstractTreeViewer.ALL_LEVELS);
-			
-//		viewer.refresh();
+		viewer.expandToLevel(current!=null ? current : home, 1);
 	}
+	
+	
 
 	@Override
 	public String getViewID() {

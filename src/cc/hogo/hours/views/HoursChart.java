@@ -1,19 +1,31 @@
 package cc.hogo.hours.views;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.swtchart.IAxis;
 import org.swtchart.ILineSeries;
+import org.swtchart.ISeries.SeriesType;
 import org.swtchart.ISeriesSet;
 import org.swtchart.LineStyle;
-import org.swtchart.ISeries.SeriesType;
 
 import cc.hogo.hours.core.Months;
 
 public class HoursChart extends ChartComposite {
+
+	static class Line {
+		final Color color;
+		final LineStyle style;
+		
+		Line(Color color, LineStyle style) { 
+			this.color = color;
+			this.style = style;
+		}
+	}
+
+	private LinkedList<Line> LINES = new LinkedList<>();
 
 	void fillMonths() {
 		IAxis xAxis = getXAxis();
@@ -39,9 +51,20 @@ public class HoursChart extends ChartComposite {
 		series.setLineStyle(style);
 		return series;
 	}
-	
-	public ILineSeries addSeries(String title, double[] values) { 
-		Color color = Display.getCurrent().getSystemColor(ThreadLocalRandom.current().nextInt(2, 16));
-		return addSeries(title, values, color, LineStyle.SOLID);
+
+	public ILineSeries addSeries(String title, double[] values) {
+		if (LINES.isEmpty()) {
+			LineStyle[] styles = LineStyle.values();
+			for (LineStyle style : styles) {
+				if (style == LineStyle.NONE)
+					continue;
+				for (int i = 2; i < 16; i++) {
+					LINES.push(new Line(Display.getCurrent().getSystemColor(i), style));
+				}
+			}
+		}
+		
+		Line line = LINES.pop();
+		return addSeries(title, values, line.color, line.style);
 	}
 }
