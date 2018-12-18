@@ -48,7 +48,7 @@ public class HoursImportDialog extends DefaultSizeDialog {
 		public String getTime() {
 			return time != null ? FORMATTER.format(time) : "";
 		}
-		
+
 		@Override
 		public String toString() {
 			return getTime() + " (" + firstRecord + " - " + lastRecord + ")";
@@ -76,8 +76,8 @@ public class HoursImportDialog extends DefaultSizeDialog {
 
 		Composite container = (Composite) super.createDialogArea(parent);
 		container.setLayout(new FillLayout());
-		
-		Table table = new Table(container, SWT.NONE);
+
+		Table table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
@@ -133,11 +133,14 @@ public class HoursImportDialog extends DefaultSizeDialog {
 
 					int end1 = msg.lastIndexOf('\'');
 					int end2 = msg.lastIndexOf('\'', end1 - 1);
+					try {
+						String[] ins = msg.substring(end2 + 1, end1).split("-");
 
-					String[] ins = msg.substring(end2 + 1, end1).split("-");
+						viewer.add(new ImportEntry(date.toLocalDateTime(), Integer.parseInt(ins[0]),
+								Integer.parseInt(ins[1])));
+					} catch (Exception e) {
 
-					viewer.add(new ImportEntry(date.toLocalDateTime(), Integer.parseInt(ins[0]),
-							Integer.parseInt(ins[1])));
+					}
 				}
 			}
 		}
@@ -152,7 +155,7 @@ public class HoursImportDialog extends DefaultSizeDialog {
 	@Override
 	protected void okPressed() {
 		if (selected != null) {
-			if(MessageDialog.openQuestion(getShell(), "Import Löschen",
+			if (MessageDialog.openQuestion(getShell(), "Import Löschen",
 					String.format("Willst du den gesamten Import '%s' wirklich löschen?", selected.getTime()))) {
 				try (Statement stmt = DB.instance().getConnection().createStatement()) {
 					stmt.executeUpdate(String.format("delete from hours where id >= %d AND id <= %d",

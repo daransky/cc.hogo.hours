@@ -192,6 +192,9 @@ public class HourEntry {
 	}
 
 	static String getUnquoted(String arg) {
+		if( arg == null || arg.isEmpty() )
+			return "";
+		
 		int i = arg.indexOf('\"');
 		int e = arg.lastIndexOf('\"');
 
@@ -199,17 +202,19 @@ public class HourEntry {
 	}
 
 	static int toInt(String arg) {
-		return Integer.parseInt(arg);
+		
+		return arg != null && !arg.isEmpty() ? Integer.parseInt(arg) : 0;
 	}
 
 	static float toFloat(String arg) {
-		if (arg != null) {
-			if (arg.indexOf('.') != -1)
-				arg = arg.replace(".", "");
+		if(arg == null || arg.isEmpty())
+			return 0f;
+		
+		if (arg.indexOf('.') != -1)
+			arg = arg.replace(".", "");
 
-			arg = arg.replace(',', '.');
+		arg = arg.replace(',', '.');
 
-		}
 		return Float.parseFloat(arg);
 	}
 

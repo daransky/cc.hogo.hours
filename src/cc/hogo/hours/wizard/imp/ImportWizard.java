@@ -13,10 +13,11 @@ public class ImportWizard extends Wizard {
 	public static final String ID = "cc.hogo.hours.wizard.ImportWizard";
 
 	private ImportContext context = new ImportContext();
+	private IWizardPage last;
+	private IWizardPage next = null;
 
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		IWizardPage next = null;
 		if (page.canFlipToNextPage()) {
 			next = super.getNextPage(page);
 			((IImportPage) next).reload();
@@ -26,14 +27,14 @@ public class ImportWizard extends Wizard {
 
 	@Override
 	public boolean canFinish() {
-		return getStartingPage().canFlipToNextPage();
+		return next == last;
 	}
 
 
 	@Override
 	public boolean performFinish() {
-		LogEntry last = Logger.instance().getImportEntry(context.year, context.month);
-		if (last != null && !MessageDialog.openConfirm(getShell(), "Import vorhanden",
+		LogEntry entry = Logger.instance().getImportEntry(context.year, context.month);
+		if (entry != null && !MessageDialog.openConfirm(getShell(), "Import vorhanden",
 					String.format("Import mit aktuellen Datum (%d/%d) bereits vorhanden. Möchten Sie vortfahren?",
 							context.month, context.year))) {
 				return false;
@@ -41,6 +42,7 @@ public class ImportWizard extends Wizard {
 
 		try {
 			context.importRecords();
+			MessageDialog.openConfirm(getShell(), "Import ist erfolgreich", "Es wurden "+context.getHours().size()+" sätze importiert." );
 		} catch (Exception e) {
 			DialogPage page = (DialogPage) getContainer().getCurrentPage();
 			page.setErrorMessage(e.getMessage());
@@ -51,8 +53,9 @@ public class ImportWizard extends Wizard {
 
 	@Override
 	public void addPages() {
+		last = new ImportPage2(context);
 		addPage(new ImportPage(context));
-		addPage(new ImportPage2(context));
+		addPage(last);
 	}
 
 }

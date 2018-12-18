@@ -8,6 +8,19 @@ public class HoursDisponentTableEntry {
 	
 	float current[] = new float[12];
 	
+	static class SubEntry { 
+		final HoursDisponentTableEntry parent;
+		
+		float[] value = new float[12];
+
+		public SubEntry(HoursDisponentTableEntry parent) {
+			this.parent = parent;
+		}
+		
+	}
+	
+	SubEntry[]	childs;
+	
 	public HoursDisponentTableEntry(int kundennummer, String kundenname, String kurzbezeichnung) {
 		super();
 		this.kundennummer = kundennummer;
@@ -43,5 +56,7 @@ public class HoursDisponentTableEntry {
 		this.current[month] = value;
 	}
 	
-	
+	public boolean hasChildren() { 
+		return childs!=null && childs.length > 0;
+	}
 }

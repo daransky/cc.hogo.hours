@@ -28,7 +28,9 @@ public class ImportContext {
 	int year;
 	final boolean loadHistory;
 	String path;
+	
 	List<HourEntry> hours = new LinkedList<>();
+
 
 	public ImportContext() {
 		this(false);
@@ -40,13 +42,14 @@ public class ImportContext {
 
 	public int load() throws IOException {
 		hours.clear();
-		if (path != null)
+		if (path != null) {
 			try (CSVReader reader = CSVReader.open(path)) {
 				HourEntry e = null;
 				while ((e = reader.readNext()) != null) {
 					hours.add(e);
 				}
 			}
+		}
 		return hours.size();
 	}
 

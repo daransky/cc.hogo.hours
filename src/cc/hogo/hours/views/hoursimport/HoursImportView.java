@@ -1,5 +1,6 @@
 package cc.hogo.hours.views.hoursimport;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Year;
 import java.util.Collection;
@@ -11,6 +12,8 @@ import java.util.function.Function;
 import org.daro.common.ui.AbstractView;
 import org.daro.common.ui.TableContentProvider;
 import org.daro.common.ui.UIError;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.window.Window;
@@ -35,6 +38,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import cc.hogo.hours.Activator;
 import cc.hogo.hours.core.AbstractTableLabelProvider;
+import cc.hogo.hours.core.CustomAction;
 import cc.hogo.hours.core.MonthCombo;
 import cc.hogo.hours.db.DB;
 import cc.hogo.hours.db.Disponent;
@@ -228,6 +232,8 @@ public class HoursImportView extends AbstractView {
 				}
 			}
 		});
+		
+		createMenu();
 	}
 
 	@Override
@@ -275,5 +281,23 @@ public class HoursImportView extends AbstractView {
 			}
 		}
 		return disponents;
+	}
+	
+	void createMenu() {
+		CustomAction delete = new CustomAction("Alles Löschen", Activator.getImageDescriptor("icons/delete.png"),
+				() ->  {
+					if(MessageDialog.openQuestion(getSite().getShell(), "Alles löschen", "Willst du wirklich ALLE Daten löschen ?")) { 
+						Connection cnn = DB.instance().getConnection();
+						try { 
+						cnn.createStatement().executeUpdate("delete from hours");
+						cnn.createStatement().executeUpdate("delete from log");
+						} catch(Exception exception) {
+							UIError.showError(getSite().getShell(), "DB Fehler", "Löschen fehlgeschlagen", exception);
+						}
+					}
+		});
+		
+		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager(); 
+		toolBar.add(delete);
 	}
 }

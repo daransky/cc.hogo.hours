@@ -8,9 +8,8 @@ import cc.hogo.hours.db.HourEntry;
 
 public class CSVReader implements AutoCloseable {
 	private static final String HEADER0 = "\"GESCHST\";\"KUNDENNR\";\"KUNDNAME\";\"GESCHST_1\";\"KURZBEZ\";\"PERSONALNR\";\"FREMDLOHNNR\";\"NACHNAME\";\"VORNAME\";\"DISPONENT\";\"FAKTUR_STUNDEN\";\"LOHN_STUNDEN\"";
-	private static final String HEADER1 = "GESCHST;KUNDENNR;KUNDNAME;GESCHST_1;KURZBEZ;PERSONALNR\";FREMDLOHNNR;NACHNAME;VORNAME;DISPONENT;FAKTUR_STUNDEN;LOHN_STUNDEN";
+	private static final String HEADER1 = "GESCHST;KUNDENNR;KUNDNAME;GESCHST_1;KURZBEZ;PERSONALNR;FREMDLOHNNR;NACHNAME;VORNAME;DISPONENT;FAKTUR_STUNDEN;LOHN_STUNDEN";
 	private final LineNumberReader reader;
-	private static final String[] HEADER = HEADER1.split(";");
 
 	private CSVReader(LineNumberReader reader) {
 		this.reader = reader;
@@ -21,9 +20,9 @@ public class CSVReader implements AutoCloseable {
 		LineNumberReader reader = new LineNumberReader(new FileReader(path));
 		String line = reader.readLine();
 
-		if (line.compareToIgnoreCase(HEADER0) == 0 || line.compareToIgnoreCase(HEADER1) == 0) {
+		if (line.compareToIgnoreCase(HEADER0) != 0 && line.compareToIgnoreCase(HEADER1) != 0) {
 			reader.close();
-			throw new IOException("Invalid format");
+			throw new IOException("Format ist ungültig.");
 		}
 		return new CSVReader(reader);
 	}

@@ -9,10 +9,10 @@ public class ImportAllWizard extends Wizard {
 	public static final String ID = "cc.hogo.hours.wizard.ImportAllWizard";
 
 	private ImportContext context = new ImportContext(true);
-
+	private IWizardPage	last;
+	private IWizardPage next = null;
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		IWizardPage next = null;
 		if (page.canFlipToNextPage()) {
 			next = super.getNextPage(page);
 			((IImportPage) next).reload();
@@ -22,7 +22,7 @@ public class ImportAllWizard extends Wizard {
 
 	@Override
 	public boolean canFinish() {
-		return getStartingPage().canFlipToNextPage();
+		return next == last;
 	}
 
 
@@ -40,8 +40,9 @@ public class ImportAllWizard extends Wizard {
 
 	@Override
 	public void addPages() {
+		last = new ImportPage2(context);
 		addPage(new ImportPage(context));
-		addPage(new ImportPage2(context));
+		addPage(last);
 	}
 
 }

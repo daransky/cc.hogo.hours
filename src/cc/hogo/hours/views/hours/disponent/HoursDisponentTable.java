@@ -1,33 +1,32 @@
 package cc.hogo.hours.views.hours.disponent;
 
-import org.daro.common.ui.TableContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
 
 import cc.hogo.hours.core.Months;
 
-public class HoursDisponentTable extends TableViewer {
+public class HoursDisponentTable extends TreeViewer {
 
-	public HoursDisponentTable(Table table) {
+	public HoursDisponentTable(Tree table, HoursViewDisponentModel model) {
 		super(table);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		addColumn("Total", 90, SWT.RIGHT);
 		addColumn("Firma", 300, SWT.LEFT);
-		addColumn("Gesch.", 40, SWT.CENTER);
+		addColumn("Total", 90, SWT.RIGHT);
+		addColumn("Gesch.", 60, SWT.CENTER);
 
 		for( int i = 0; i<Months.NAMES.length; i++ )
 			addColumn(Months.NAMES[i], 90, SWT.RIGHT);
 		
-		setContentProvider(new TableContentProvider<>(this));
+		setContentProvider(new HoursDisponentTableContentProvider(model));
 		setLabelProvider(new HoursDisponentTableLabelProvider());
 	}
 	
-	TableViewerColumn addColumn(String text, int width, int swt) { 
-		TableViewerColumn col = new TableViewerColumn(this, swt);
+	TreeViewerColumn addColumn(String text, int width, int swt) { 
+		TreeViewerColumn col = new TreeViewerColumn(this, swt);
 		col.getColumn().setText(text);
 		col.getColumn().setWidth(width);
 		return col;
