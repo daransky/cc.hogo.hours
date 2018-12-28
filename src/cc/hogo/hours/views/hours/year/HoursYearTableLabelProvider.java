@@ -10,9 +10,7 @@ import org.eclipse.swt.graphics.Font;
 import cc.hogo.hours.core.AbstractTableLabelProvider;
 import cc.hogo.hours.views.hours.year.HoursYearTableEntry.Office;
 
-public class HoursYearTableLabelProvider extends AbstractTableLabelProvider implements ITableFontProvider 
-//implements ITableColorProvider, 
-{
+public class HoursYearTableLabelProvider extends AbstractTableLabelProvider implements ITableFontProvider {
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
@@ -38,22 +36,6 @@ public class HoursYearTableLabelProvider extends AbstractTableLabelProvider impl
 			return String.format(Locale.GERMAN, "%,.2f", values[columnIndex-1]);
 		}
 	} 
-/*
-	@Override
-	public Color getForeground(Object element, int columnIndex) {
-		return null;
-	}
-
-	@Override
-	public Color getBackground(Object element, int columnIndex) {
-		final HoursYearTableEntry e = (HoursYearTableEntry) element;
-		if(columnIndex <= 1) 
-			return null;
-		
-		float value = e.getHours(columnIndex - 2, true);
-		return ( value > 0 && value < 10 ) ? Display.getCurrent().getSystemColor(SWT.COLOR_RED) : null;
-	}
- */
 
 	@Override
 	public Font getFont(Object element, int columnIndex) {

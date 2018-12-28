@@ -19,21 +19,21 @@ public class HoursViewAllModel implements AutoCloseable {
 
 		Connection connection = DB.instance().getConnection();
 		set.all = connection.prepareStatement("select year,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  AND month = 0 group by month) as Januar,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 1 group by month) as Februar,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 2 group by month) as März,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 3 group by month) as April,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 4 group by month) as Mai,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 5 group by month) as Juni,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 6 group by month) as Juli,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 7 group by month) as August,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 8 group by month) as September,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 9 group by month) as Oktober,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 10 group by month) as November,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.year  and month = 11 group by month) as Dezember\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  AND month = 0 group by month) as Januar,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 1 group by month) as Februar,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 2 group by month) as März,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 3 group by month) as April,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 4 group by month) as Mai,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 5 group by month) as Juni,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 6 group by month) as Juli,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 7 group by month) as August,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 8 group by month) as September,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 9 group by month) as Oktober,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 10 group by month) as November,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.year  and month = 11 group by month) as Dezember\n"
 				+ " from hours as h group by year order by year desc");
 		set.officeHours = DB.instance().getConnection()
-				.prepareStatement("select month, geschaeftstelle, kurzbezeichnung, sum(lohnstunden) as total\r\n"
+				.prepareStatement("select month, geschaeftstelle, kurzbezeichnung, sum(fakturstunden) as total\r\n"
 						+ "from hours where year = ? "
 						+ "group by month, geschaeftstelle, kurzbezeichnung order by \"month\"");
 		return set;

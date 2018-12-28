@@ -5,6 +5,8 @@
          id="application"
          point="org.eclipse.core.runtime.applications">
       <application
+            cardinality="singleton-global"
+            icon="icons/person.gif"
             thread="main"
             visible="true">
          <run

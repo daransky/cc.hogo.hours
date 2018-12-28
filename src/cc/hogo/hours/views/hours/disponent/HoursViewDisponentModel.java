@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import cc.hogo.hours.db.DB;
@@ -24,23 +23,23 @@ public class HoursViewDisponentModel implements AutoCloseable {
 
 		Connection connection = DB.instance().getConnection();
 		set.monthHours = connection.prepareStatement(
-				"select kundennummer, kundenname, sum(lohnstunden) as lohnstunden, kurzbezeichnung from hours where disponentid = ? and month = ? and year = ? group by kundenname, kundennummer, kurzbezeichnung;");
+				"select kundennummer, kundenname, sum(fakturstunden) as fakturstunden, kurzbezeichnung from hours where disponentid = ? and month = ? and year = ? group by kundenname, kundennummer, kurzbezeichnung;");
 		set.sumHours = connection.prepareStatement("select year, disponentid,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  AND \"month\" = 0 and disponentid=h.disponentid group by \"month\") as Januar,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 1 and disponentid=h.disponentid group by month) as Februar,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 2 and disponentid=h.disponentid group by month) as März,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 3 and disponentid=h.disponentid group by month) as April,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 4 and disponentid=h.disponentid group by month) as Mai,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 5 and disponentid=h.disponentid group by month) as Juni,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 6 and disponentid=h.disponentid group by month) as Juli,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 7 and disponentid=h.disponentid group by month) as August,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 8 and disponentid=h.disponentid group by month) as September,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 9 and disponentid=h.disponentid group by month) as Oktober,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 10 and disponentid=h.disponentid group by month) as November,\n"
-				+ " (select sum(lohnstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 11 and disponentid=h.disponentid group by month) as Dezember\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  AND \"month\" = 0 and disponentid=h.disponentid group by \"month\") as Januar,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 1 and disponentid=h.disponentid group by month) as Februar,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 2 and disponentid=h.disponentid group by month) as März,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 3 and disponentid=h.disponentid group by month) as April,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 4 and disponentid=h.disponentid group by month) as Mai,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 5 and disponentid=h.disponentid group by month) as Juni,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 6 and disponentid=h.disponentid group by month) as Juli,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 7 and disponentid=h.disponentid group by month) as August,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 8 and disponentid=h.disponentid group by month) as September,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 9 and disponentid=h.disponentid group by month) as Oktober,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 10 and disponentid=h.disponentid group by month) as November,\n"
+				+ " (select sum(fakturstunden) from hours where \"year\" = h.\"year\"  and \"month\" = 11 and disponentid=h.disponentid group by month) as Dezember\n"
 				+ " from hours as h where year = ? and disponentid = ? group by \"year\", disponentid order by \"year\" desc");
 		set.children = connection.prepareStatement(
-				"select lohnstunden, month from hours where disponentid = ? and kundennummer = ? and year = ?");
+				"select fakturstunden, month from hours where disponentid = ? and kundennummer = ? and year = ?");
 		return set;
 	}
 
@@ -61,7 +60,7 @@ public class HoursViewDisponentModel implements AutoCloseable {
 								rs.getString("kurzbezeichnung"));
 						set.put(e.kundennummer, e);
 					}
-					e.setHours(month, rs.getFloat("lohnstunden"));
+					e.setHours(month, rs.getFloat("fakturstunden"));
 				}
 			}
 		}
@@ -76,7 +75,7 @@ public class HoursViewDisponentModel implements AutoCloseable {
 			float[] sum = new float[13];
 			if (rs.next())
 				for (int i = 0; i < 12; i++)
-					sum[0] += sum[i] = rs.getFloat(i + 3);
+					sum[0] += sum[i+1] = rs.getFloat(i + 3);
 			return sum;
 		}
 	}

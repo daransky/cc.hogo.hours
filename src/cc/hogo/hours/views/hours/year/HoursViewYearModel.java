@@ -32,13 +32,13 @@ public class HoursViewYearModel implements AutoCloseable {
 
 		final Counter c = new Counter();
 		joiner.append(Arrays.asList(Months.NAMES).stream().map(mname -> (String) String.format(
-				" (select sum(lohnstunden) from hours where disponentid = sid and \"month\" = %d and \"year\" = ?) as %s",
+				" (select sum(fakturstunden) from hours where disponentid = sid and \"month\" = %d and \"year\" = ?) as %s",
 				c.next(), mname)).collect(Collectors.joining(",\n")));
 		joiner.append("\n from disponent");
 
 		set.yearHours = DB.instance().getConnection().prepareStatement(joiner.toString());
 		set.officeHours = DB.instance().getConnection()
-				.prepareStatement("select month, geschaeftstelle, kurzbezeichnung, sum(lohnstunden) as total\r\n"
+				.prepareStatement("select month, geschaeftstelle, kurzbezeichnung, sum(fakturstunden) as total\r\n"
 						+ "from hours where \"year\" = ? and disponentid = ? "
 						+ "group by month, geschaeftstelle, kurzbezeichnung order by \"month\"");
 		return set;
