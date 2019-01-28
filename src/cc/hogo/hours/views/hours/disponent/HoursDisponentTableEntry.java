@@ -1,6 +1,6 @@
 package cc.hogo.hours.views.hours.disponent;
 
-public class HoursDisponentTableEntry {
+class HoursDisponentTableEntry {
 	
 	int kundennummer;
 	String kundenname;

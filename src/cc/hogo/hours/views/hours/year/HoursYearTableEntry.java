@@ -1,6 +1,6 @@
 package cc.hogo.hours.views.hours.year;
 
-public class HoursYearTableEntry {
+class HoursYearTableEntry {
 	
 	public static class Office {
 		final int id;

@@ -1,8 +1,13 @@
 package cc.hogo.hours.views.hours.disponent;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.time.Year;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.daro.common.ui.TreeNodeData;
@@ -14,8 +19,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.swtchart.LineStyle;
 
+import cc.hogo.hours.core.Months;
+import cc.hogo.hours.core.export.HtmlTable;
+import cc.hogo.hours.core.export.HtmlTable.HtmlRecord;
 import cc.hogo.hours.db.Disponent;
 import cc.hogo.hours.views.HoursAbstractView;
 import cc.hogo.hours.views.HoursChart;
@@ -41,7 +50,6 @@ public class HoursViewDisponent extends HoursAbstractView {
 	@Override
 	protected Composite createChart(Composite parent) {
 		chart = new HoursChart(parent, SWT.NONE);
-
 		return chart;
 	}
 
@@ -80,13 +88,13 @@ public class HoursViewDisponent extends HoursAbstractView {
 //			public void treeCollapsed(TreeExpansionEvent event) {//
 //			}
 //		});
-		
+
 		try {
 			model = HoursViewDisponentModel.open();
 		} catch (SQLException e) {
 			UIError.showError("DB Fehler", e);
 		}
-		
+
 		table = new HoursDisponentTable(t, model);
 		refresh();
 		return top;
@@ -94,6 +102,64 @@ public class HoursViewDisponent extends HoursAbstractView {
 
 	@Override
 	public void setFocus() { //
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+
+
+		addExportToClipboardMenu(() -> {
+			final int FIRMA = 500;
+			final int TOTAL = 50;
+			final int MONTH = 30;
+			final TreeItem[] items = table.getTree().getItems();
+			final HtmlTable htmlTable = new HtmlTable();
+
+			HtmlRecord rec = htmlTable.addRecord().addValue("Firma", FIRMA).addValue("Total", TOTAL).setHeader(true);
+			for (String s : Months.NAMES)
+				rec.addValue(s, MONTH);
+
+			for (int i = 0, max = items.length; i < max; i++) {
+				HoursDisponentTableEntry id = (HoursDisponentTableEntry) items[i].getData();
+				rec = htmlTable.addRecord().addValue(id.getKundenname(), 500).addValue(Float.toString(id.getTotal()),
+						50);
+				for (int m = 0; m < 12; m++)
+					rec.addValue(Float.toString(id.getHours(m)), 30);
+			}
+			return htmlTable.toHtml();
+		});
+
+		addExportToFileMenu((path) -> {
+			final TreeItem[] items = table.getTree().getItems();
+			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
+
+				out.write("Firma");
+				out.write(';');
+				out.write("Total");
+				out.write(';');
+				for (String s : Months.NAMES) {
+					out.write(s);
+					out.write(';');
+				}
+				out.println();
+				
+				for (int i = 0, max = items.length; i < max; i++) {
+					HoursDisponentTableEntry id = (HoursDisponentTableEntry) items[i].getData();
+					out.write(id.getKundenname());
+					out.write(';');
+					out.printf(Locale.GERMAN, "%,.2f", id.getTotal());
+					out.write(';');	
+					for (int m = 0; m < 12; m++) {
+						out.printf(Locale.GERMAN, "%,.2f", id.getHours(m));
+						out.write(';');
+					}
+					out.println();
+				}
+			} catch( IOException e ) {
+				UIError.showError(getSite().getShell(), "Fehler beim export", "Daten konnten nicht gespeichert werden, Ursache:\n"+e.getMessage() , e);
+			}
+		});
 	}
 
 	public void refresh() {

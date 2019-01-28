@@ -1,7 +1,12 @@
 package cc.hogo.hours.views.hours.year;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Locale;
 
 import org.daro.common.ui.TreeNodeData;
 import org.daro.common.ui.UIError;
@@ -13,8 +18,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.swtchart.IAxis;
 
+import cc.hogo.hours.core.Months;
+import cc.hogo.hours.core.export.HtmlTable;
+import cc.hogo.hours.core.export.HtmlTable.HtmlRecord;
 import cc.hogo.hours.db.Disponent;
 import cc.hogo.hours.views.HoursAbstractView;
 import cc.hogo.hours.views.HoursChart;
@@ -74,6 +83,60 @@ public class HoursViewYear extends HoursAbstractView {
 		super.createPartControl(parent);
 		TabItem item = newTab("Geschäftstellen");
 		item.setControl(createOfficeChart(folder));
+		
+		addExportToClipboardMenu(() -> {
+			final int FIRMA = 500;
+			final int TOTAL = 50;
+			final int MONTH = 30;
+
+			final TreeItem[] items = table.getTree().getItems();
+			final HtmlTable htmlTable = new HtmlTable();
+
+			HtmlRecord rec = htmlTable.addRecord().addValue("Vertreter", FIRMA).addValue("Total", TOTAL).setHeader(true);
+			for (String s : Months.NAMES)
+				rec.addValue(s, MONTH);
+
+			for (int i = 0, max = items.length; i < max; i++) {
+				HoursYearTableEntry id = (HoursYearTableEntry) items[i].getData();
+				rec = htmlTable.addRecord().addValue(id.getName(), 500).addValue(Float.toString(id.getYearSum()),
+						50);
+				for (int m = 0; m < 12; m++)
+					rec.addValue(Float.toString(id.getValue(m)), 30);
+			}
+			return htmlTable.toHtml();
+		});
+
+		addExportToFileMenu((path) -> {
+			final TreeItem[] items = table.getTree().getItems();
+			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
+
+				out.write("Firma");
+				out.write(';');
+				out.write("Total");
+				out.write(';');
+				for (String s : Months.NAMES) {
+					out.write(s);
+					out.write(';');
+				}
+				out.println();
+				
+				for (int i = 0, max = items.length; i < max; i++) {
+					HoursYearTableEntry id = (HoursYearTableEntry) items[i].getData();
+					out.write(id.getName());
+					out.write(';');
+					out.printf(Locale.GERMAN, "%,.2f", id.getYearSum());
+					out.write(';');
+					for (int m = 0; m < 12; m++) {
+						out.printf(Locale.GERMAN, "%,.2f", id.getValue(m));
+						out.write(';');
+					}
+					out.println();
+				}
+			} catch( IOException e ) {
+				UIError.showError(getSite().getShell(), "Fehler beim export", "Daten konnten nicht gespeichert werden, Ursache:\n"+e.getMessage() , e);
+			}
+		});
+		
 		refresh();
 	}
 

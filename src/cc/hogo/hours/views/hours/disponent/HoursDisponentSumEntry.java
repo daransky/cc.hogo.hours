@@ -1,6 +1,6 @@
 package cc.hogo.hours.views.hours.disponent;
 
-public class HoursDisponentSumEntry {
+class HoursDisponentSumEntry {
 
 	int 	year;
 	float 	sum;

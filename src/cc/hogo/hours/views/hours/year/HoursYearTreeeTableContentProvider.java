@@ -3,7 +3,6 @@ package cc.hogo.hours.views.hours.year;
 import java.util.Collection;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 import cc.hogo.hours.views.hours.year.HoursYearTableEntry.Office;
 

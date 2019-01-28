@@ -1,8 +1,8 @@
 	package cc.hogo.hours.views.hours;
 
-public class HoursAllTableEntry {
+class HoursAllTableEntry {
 
-	public static class Office {
+	static class Office {
 		final int id;
 		float sum[] = new float[13];
 		final String name;
