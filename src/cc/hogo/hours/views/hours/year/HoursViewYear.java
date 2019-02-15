@@ -5,11 +5,13 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
 import org.daro.common.ui.TreeNodeData;
 import org.daro.common.ui.UIError;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -83,6 +85,14 @@ public class HoursViewYear extends HoursAbstractView {
 		super.createPartControl(parent);
 		TabItem item = newTab("Geschäftstellen");
 		item.setControl(createOfficeChart(folder));
+		
+		addExpandCollapseMenu(() -> {
+			TreeItem[] items = table.getTree().getItems();
+			Arrays.asList(items).forEach(it -> table.expandToLevel(it.getData(), TreeViewer.ALL_LEVELS));
+		}, () -> {
+			TreeItem[] items = table.getTree().getItems();
+			Arrays.asList(items).forEach(it -> table.collapseToLevel(it.getData(), TreeViewer.ALL_LEVELS));
+		});
 		
 		addExportToClipboardMenu(() -> {
 			final int FIRMA = 500;

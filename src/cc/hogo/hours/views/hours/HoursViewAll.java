@@ -5,10 +5,12 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
 import org.daro.common.ui.UIError;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -63,6 +65,15 @@ public class HoursViewAll extends HoursAbstractView {
 
 		super.createPartControl(parent);
 
+		addExpandCollapseMenu(() -> {
+			TreeItem[] items = table.getTree().getItems();
+			Arrays.asList(items).forEach(item -> table.expandToLevel(item, TreeViewer.ALL_LEVELS, true));
+		}, () -> {
+
+			TreeItem[] items = table.getTree().getItems();
+			Arrays.asList(items).forEach(item -> table.collapseToLevel(item.getData(), TreeViewer.ALL_LEVELS));
+		});
+
 		addExportToClipboardMenu(() -> {
 			final int FIRMA = 500;
 			final int TOTAL = 50;
@@ -76,8 +87,7 @@ public class HoursViewAll extends HoursAbstractView {
 
 			for (int i = 0, max = items.length; i < max; i++) {
 				HoursAllTableEntry id = (HoursAllTableEntry) items[i].getData();
-				rec = htmlTable.addRecord().addValue(id.getName(), 500).addValue(Float.toString(id.getTotal()),
-						50);
+				rec = htmlTable.addRecord().addValue(id.getName(), 500).addValue(Float.toString(id.getTotal()), 50);
 				for (int m = 0; m < 12; m++)
 					rec.addValue(Float.toString(id.getHours(m)), 30);
 			}
@@ -86,7 +96,8 @@ public class HoursViewAll extends HoursAbstractView {
 
 		addExportToFileMenu((path) -> {
 			final TreeItem[] items = table.getTree().getItems();
-			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
+			try (PrintWriter out = new PrintWriter(
+					Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
 
 				out.write("Firma");
 				out.write(';');
@@ -97,21 +108,22 @@ public class HoursViewAll extends HoursAbstractView {
 					out.write(';');
 				}
 				out.println();
-				
+
 				for (int i = 0, max = items.length; i < max; i++) {
 					HoursAllTableEntry id = (HoursAllTableEntry) items[i].getData();
 					out.write(id.getName());
 					out.write(';');
 					out.printf(Locale.GERMAN, "%,.2f", id.getTotal());
-					out.write(';');	
+					out.write(';');
 					for (int m = 0; m < 12; m++) {
 						out.printf(Locale.GERMAN, "%,.2f", id.getHours(m));
 						out.write(';');
 					}
 					out.println();
 				}
-			} catch( IOException e ) {
-				UIError.showError(getSite().getShell(), "Fehler beim export", "Daten konnten nicht gespeichert werden, Ursache:\n"+e.getMessage() , e);
+			} catch (IOException e) {
+				UIError.showError(getSite().getShell(), "Fehler beim export",
+						"Daten konnten nicht gespeichert werden, Ursache:\n" + e.getMessage(), e);
 			}
 		});
 		refresh();
@@ -145,7 +157,8 @@ public class HoursViewAll extends HoursAbstractView {
 		chart.removeSeries();
 
 		for (HoursAllTableEntry e : result) {
-			chart.addSeries(e.getName() + ' ' + String.format(Locale.GERMAN, "%,.2f", e.getTotal()), e.getMonthValues());
+			chart.addSeries(e.getName() + ' ' + String.format(Locale.GERMAN, "%,.2f", e.getTotal()),
+					e.getMonthValues());
 		}
 
 		chart.getChart().getAxisSet().adjustRange();

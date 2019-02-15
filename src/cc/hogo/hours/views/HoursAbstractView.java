@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import org.daro.common.ui.AbstractView;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.HTMLTransfer;
@@ -24,7 +23,6 @@ import cc.hogo.hours.core.CustomAction;
 public abstract class HoursAbstractView extends AbstractView {
 
 	protected TabFolder folder;
-	private boolean expanded;
 	@Override
 	public void createPartControl(Composite parent) {
 		folder = new TabFolder(parent, SWT.BORDER);
@@ -34,9 +32,9 @@ public abstract class HoursAbstractView extends AbstractView {
 
 		item = newTab("Übersicht");
 		item.setControl(createChart(folder));
-
+		
 	}
-
+	
 	@Override
 	public void setFocus() {
 	}
@@ -49,19 +47,6 @@ public abstract class HoursAbstractView extends AbstractView {
 		TabItem item = new TabItem(folder, SWT.BORDER);
 		item.setText(title);
 		return item;
-	}
-
-	protected void addCollapseExpandMenu(TreeViewer viewer) {
-		CustomAction export = new CustomAction("Copy to clipboard", Activator.getImageDescriptor("icons/export.gif"),
-				() -> { 
-					if( expanded )
-						viewer.collapseAll();
-					else
-						viewer.expandAll();
-					expanded = !expanded;
-				});
-		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
-		toolBar.add(export);
 	}
 
 	protected void addExportToFileMenu(Consumer<Path> toFile) {
@@ -96,4 +81,6 @@ public abstract class HoursAbstractView extends AbstractView {
 		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
 		toolBar.add(export);
 	}
+	
+
 }

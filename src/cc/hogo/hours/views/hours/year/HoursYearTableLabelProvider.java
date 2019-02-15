@@ -8,7 +8,6 @@ import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.swt.graphics.Font;
 
 import cc.hogo.hours.core.AbstractTableLabelProvider;
-import cc.hogo.hours.views.hours.year.HoursYearTableEntry.Office;
 
 public class HoursYearTableLabelProvider extends AbstractTableLabelProvider implements ITableFontProvider {
 
@@ -21,8 +20,8 @@ public class HoursYearTableLabelProvider extends AbstractTableLabelProvider impl
 			HoursYearTableEntry e = (HoursYearTableEntry) element;
 			name = e.getName();
 			values = e.getValues();
-		} else if (element instanceof Office) {
-			Office e = (Office) element;
+		} else if (element instanceof OfficeYearEntry) {
+			OfficeYearEntry e = (OfficeYearEntry) element;
 			name = e.getName();
 			values = e.getSum();
 		}

@@ -5,8 +5,6 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import cc.hogo.hours.views.hours.HoursAllTableEntry.Office;
-
 public class HoursAllTreeeTableContentProvider implements ITreeContentProvider {
 
 	Collection<HoursAllTableEntry> root; 
@@ -48,8 +46,8 @@ public class HoursAllTreeeTableContentProvider implements ITreeContentProvider {
 			return root;
 		}
 		
-		if (element instanceof Office) {
-			Office o = (Office)element;
+		if (element instanceof HoursOfficeEntry) {
+			HoursOfficeEntry o = (HoursOfficeEntry)element;
 			return o.parent;
 		}
 		return null;

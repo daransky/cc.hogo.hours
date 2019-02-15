@@ -6,12 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.time.Year;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.function.Function;
 
 import org.daro.common.ui.TreeNodeData;
 import org.daro.common.ui.UIError;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -67,28 +69,14 @@ public class HoursViewDisponent extends HoursAbstractView {
 		Tree t = new Tree(top, SWT.BORDER | SWT.FULL_SELECTION);
 		t.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		table.addTreeListener(new ITreeViewerListener() {
-//
-//			@Override
-//			public void treeExpanded(TreeExpansionEvent event) {
-//				Object elementNode = event.getElement();
-//				if (elementNode instanceof HoursDisponentTableEntry) {
-//					HoursDisponentTableEntry entry = (HoursDisponentTableEntry) elementNode;
-//					if (!entry.hasChildren()) {
-//						try {
-//							model.loadSubEntries(entry, year);
-//						} catch (SQLException e) {
-//							UIError.showError("DB Fehler", e);
-//						}
-//					}
-//				}
-//			}
-//
-//			@Override
-//			public void treeCollapsed(TreeExpansionEvent event) {//
-//			}
-//		});
-
+		addExpandCollapseMenu(() -> {
+			TreeItem[] items = table.getTree().getItems();
+			Arrays.asList(items).forEach(item -> table.expandToLevel(item.getData(), TreeViewer.ALL_LEVELS));
+		}, () -> {
+			TreeItem[] items = table.getTree().getItems();
+			Arrays.asList(items).forEach(item -> table.collapseToLevel(item.getData(), TreeViewer.ALL_LEVELS));
+		});
+		
 		try {
 			model = HoursViewDisponentModel.open();
 		} catch (SQLException e) {
@@ -107,7 +95,6 @@ public class HoursViewDisponent extends HoursAbstractView {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-
 
 		addExportToClipboardMenu(() -> {
 			final int FIRMA = 500;

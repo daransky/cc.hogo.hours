@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import cc.hogo.hours.core.Months;
 import cc.hogo.hours.db.DB;
-import cc.hogo.hours.views.hours.year.HoursYearTableEntry.Office;
 
 public class HoursViewYearModel implements AutoCloseable {
 	private PreparedStatement yearHours;
@@ -53,7 +52,7 @@ public class HoursViewYearModel implements AutoCloseable {
 		for (HoursYearTableEntry e : data) {
 			hogo.add(e.getValues());
 			if (e.getOfficeEntries() != null) {
-				for (Office o : e.getOfficeEntries()) {
+				for (OfficeYearEntry o : e.getOfficeEntries()) {
 					SumHoursOverviewRecord office = map.get(o.getName());
 					if (office == null) {
 						office = new SumHoursOverviewRecord(o.getName());

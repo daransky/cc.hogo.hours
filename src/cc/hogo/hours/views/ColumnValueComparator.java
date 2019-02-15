@@ -77,7 +77,9 @@ public class ColumnValueComparator<T> extends ViewerComparator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		return direction * comparator.compare((T)e1, (T)e2);
+		return ( e1.getClass().isInstance(e2)) ? 
+				direction * comparator.compare((T)e1, (T)e2) : 
+					0;
 	}
 
 }

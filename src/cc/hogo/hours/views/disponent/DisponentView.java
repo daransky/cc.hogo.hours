@@ -56,6 +56,10 @@ public class DisponentView extends AbstractView {
 		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager(); 
 		toolBar.add(refresh);
 		
+		addExpandCollapseMenu( 	() -> viewer.expandToLevel(home,TreeViewer.ALL_LEVELS, true), 
+								() -> viewer.collapseToLevel(home,TreeViewer.ALL_LEVELS)
+								);
+		
 		initializeTree(container);
 	}
 

@@ -1,36 +1,12 @@
 	package cc.hogo.hours.views.hours;
 
-class HoursAllTableEntry {
+import cc.hogo.hours.views.HoursEntry;
 
-	static class Office {
-		final int id;
-		float sum[] = new float[13];
-		final String name;
-		final HoursAllTableEntry parent;
-		
-		public Office(HoursAllTableEntry parent, int id, String name ) {
-			this.parent = parent;
-			this.id = id;
-			this.name = name;
-		}
-		
-		public String getName() {
-			return name;
-		}
-
-		public float[] getSum() {
-			return sum;
-		}
-
-		public void setSum(int month, float sum) {
-			this.sum[month] = sum;
-		}
-	}
-
+class HoursAllTableEntry implements HoursEntry {
 	
 	int 	yaer;
 	float 	sum[] = new float[13];
-	Office	office[];
+	HoursOfficeEntry	office[];
 	
 	public HoursAllTableEntry(int year) {
 		this.yaer  = year;
@@ -62,5 +38,15 @@ class HoursAllTableEntry {
 		for(int i = 1; i < 13; i++)
 			tmp[i-1] = sum[i];
 		return tmp;
+	}
+
+	@Override
+	public float getValue(int month) {
+		return sum[month];
+	}
+
+	@Override
+	public float getYearSum() {
+		return sum[0];
 	}
 }

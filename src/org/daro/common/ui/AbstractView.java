@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.part.ViewPart;
 
 import cc.hogo.hours.Activator;
+import cc.hogo.hours.core.CustomAction;
 
 public abstract class AbstractView extends ViewPart implements IRefreshableView {
 	private   IStatusLineManager statusLine;
@@ -122,5 +123,16 @@ public abstract class AbstractView extends ViewPart implements IRefreshableView 
 
 	public void setInput(Object arg) {
 		input = arg;
+	}
+	
+	
+	protected void addExpandCollapseMenu(Runnable expand, Runnable collapse) {
+		
+		CustomAction expandAction = new CustomAction("Expand all", Activator.getImageDescriptor("platform:/plugin/org.eclipse.ui/icons/full/elcl16/expandall.png"), () -> expand.run());
+		CustomAction collapseAction = new CustomAction("Collapse all", Activator.getImageDescriptor("platform:/plugin/org.eclipse.ui/icons/full/elcl16/collapseall.png"), () ->  collapse.run());
+		
+		IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
+		toolBar.add(expandAction);
+		toolBar.add(collapseAction);
 	}
 }
