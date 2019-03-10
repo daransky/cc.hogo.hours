@@ -89,7 +89,7 @@ public class HoursViewAll extends HoursAbstractView {
 				HoursAllTableEntry id = (HoursAllTableEntry) items[i].getData();
 				rec = htmlTable.addRecord().addValue(id.getName(), 500).addValue(Float.toString(id.getTotal()), 50);
 				for (int m = 0; m < 12; m++)
-					rec.addValue(Float.toString(id.getHours(m)), 30);
+					rec.addValue(Float.toString(id.getHours(m+1)), 30);
 			}
 			return htmlTable.toHtml();
 		});
@@ -97,9 +97,9 @@ public class HoursViewAll extends HoursAbstractView {
 		addExportToFileMenu((path) -> {
 			final TreeItem[] items = table.getTree().getItems();
 			try (PrintWriter out = new PrintWriter(
-					Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
+					Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE))) {
 
-				out.write("Firma");
+				out.write("Jahr");
 				out.write(';');
 				out.write("Total");
 				out.write(';');
@@ -113,10 +113,10 @@ public class HoursViewAll extends HoursAbstractView {
 					HoursAllTableEntry id = (HoursAllTableEntry) items[i].getData();
 					out.write(id.getName());
 					out.write(';');
-					out.printf(Locale.GERMAN, "%,.2f", id.getTotal());
+					out.printf(Float.toString(id.getTotal()));
 					out.write(';');
 					for (int m = 0; m < 12; m++) {
-						out.printf(Locale.GERMAN, "%,.2f", id.getHours(m));
+						out.printf(Float.toString( id.getHours(m+1)));
 						out.write(';');
 					}
 					out.println();

@@ -119,7 +119,7 @@ public class HoursViewDisponent extends HoursAbstractView {
 
 		addExportToFileMenu((path) -> {
 			final TreeItem[] items = table.getTree().getItems();
-			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
+			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.WRITE))) {
 
 				out.write("Firma");
 				out.write(';');
@@ -135,10 +135,10 @@ public class HoursViewDisponent extends HoursAbstractView {
 					HoursDisponentTableEntry id = (HoursDisponentTableEntry) items[i].getData();
 					out.write(id.getKundenname());
 					out.write(';');
-					out.printf(Locale.GERMAN, "%,.2f", id.getTotal());
+					out.printf(Float.toString(id.getTotal()));
 					out.write(';');	
 					for (int m = 0; m < 12; m++) {
-						out.printf(Locale.GERMAN, "%,.2f", id.getHours(m));
+						out.printf(Float.toString(id.getHours(m)));
 						out.write(';');
 					}
 					out.println();

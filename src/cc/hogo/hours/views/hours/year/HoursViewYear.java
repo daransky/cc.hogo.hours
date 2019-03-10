@@ -7,7 +7,6 @@ import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 
 import org.daro.common.ui.TreeNodeData;
 import org.daro.common.ui.UIError;
@@ -111,14 +110,14 @@ public class HoursViewYear extends HoursAbstractView {
 				rec = htmlTable.addRecord().addValue(id.getName(), 500).addValue(Float.toString(id.getYearSum()),
 						50);
 				for (int m = 0; m < 12; m++)
-					rec.addValue(Float.toString(id.getValue(m)), 30);
+					rec.addValue(Float.toString(id.getValue(m+1)), 30);
 			}
 			return htmlTable.toHtml();
 		});
 
 		addExportToFileMenu((path) -> {
 			final TreeItem[] items = table.getTree().getItems();
-			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
+			try (PrintWriter out = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.WRITE))) {
 
 				out.write("Firma");
 				out.write(';');
@@ -134,10 +133,10 @@ public class HoursViewYear extends HoursAbstractView {
 					HoursYearTableEntry id = (HoursYearTableEntry) items[i].getData();
 					out.write(id.getName());
 					out.write(';');
-					out.printf(Locale.GERMAN, "%,.2f", id.getYearSum());
+					out.printf(Float.toString(id.getYearSum()));
 					out.write(';');
 					for (int m = 0; m < 12; m++) {
-						out.printf(Locale.GERMAN, "%,.2f", id.getValue(m));
+						out.printf(Float.toString(id.getValue(m+1)));
 						out.write(';');
 					}
 					out.println();
