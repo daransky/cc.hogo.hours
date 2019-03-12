@@ -80,17 +80,27 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		MenuManager fileMenu = new MenuManager("File", IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 
 		menuBar.add(fileMenu);
+		fileMenu.add(disponentView);
+		fileMenu.add(new Separator());
 
 		fileMenu.add(importAction);
 		fileMenu.add(importAllAction);
 		fileMenu.add(new Separator());
-		fileMenu.add(disponentView);
 		fileMenu.add(importView);
 		fileMenu.add(logView);
 
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 
+		
+		String name = System.getProperty("user.name");
+		boolean admin = (name != null && name.toLowerCase().contains("holzleitner"));
+		
+		importAction.setEnabled(admin);
+		importAllAction.setEnabled(admin);
+		importView.setEnabled(admin);
+		logView.setEnabled(admin);
+		
 	}
 
 }
